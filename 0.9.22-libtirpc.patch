@@ -1,0 +1,30 @@
+--- origsrc/unfs3-0.9.22/aclocal.m4	2008-12-31 09:52:09.000000000 -0600
++++ src/unfs3-0.9.22/aclocal.m4	2016-04-14 17:29:40.915417000 -0500
+@@ -3,7 +3,6 @@ dnl
+ AC_DEFUN([UNFS3_SOLARIS_RPC],[
+   AC_CHECK_FUNC(svc_tli_create, [
+     # On Solaris, you must link with librpcsoc, or the binaries won't work. 
+-    LDFLAGS="-L/usr/ucblib -R/usr/ucblib $LDFLAGS"
+     AC_CHECK_LIB(rpcsoc, svctcp_create, 
+         [ LIBS="-lrpcsoc $LIBS" ],
+         [ AC_MSG_WARN([*** Cannot find librpcsoc. On Solaris, install package SUNWscpu. ***]) ]
+--- origsrc/unfs3-0.9.22/daemon.c	2008-12-31 09:52:09.000000000 -0600
++++ src/unfs3-0.9.22/daemon.c	2016-04-14 17:27:13.664218500 -0500
+@@ -110,7 +110,7 @@ void logmsg(int prio, const char *fmt, .
+  */
+ struct in_addr get_remote(struct svc_req *rqstp)
+ {
+-    return (svc_getcaller(rqstp->rq_xprt))->sin_addr;
++    return ((struct sockaddr_in*)svc_getcaller(rqstp->rq_xprt))->sin_addr;
+ }
+ 
+ /*
+@@ -118,7 +118,7 @@ struct in_addr get_remote(struct svc_req
+  */
+ short get_port(struct svc_req *rqstp)
+ {
+-    return (svc_getcaller(rqstp->rq_xprt))->sin_port;
++    return ((struct sockaddr_in*)svc_getcaller(rqstp->rq_xprt))->sin_port;
+ }
+ 
+ /*
